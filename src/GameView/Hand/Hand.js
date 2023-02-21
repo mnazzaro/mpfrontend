@@ -1,11 +1,15 @@
+import { useContext } from 'react';
+import { PlayerContext } from '../Player/Player';
 import Card from "../Card/Card";
 
+
 function Hand (props) {
+    const playerCtxt = useContext(PlayerContext);
     return (
         <div className="hand">
             {
-                props.cards.map((card) => {
-                    return (<Card rank={card.rank} suit={card.suit}/>);
+                playerCtxt.gameData.hand.map((card, i) => {
+                    return (<Card key={i} rank={card.rank} suit={card.suit}/>);
                 })
             }
         </div>

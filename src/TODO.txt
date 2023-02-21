@@ -1,0 +1,8 @@
+1. Write context for player data
+2. Write context for WebSocket
+3. Decide where to store component actions.
+    Options:
+    - 1 ./actions.js
+    - 2. ./{component name}/actions.js
+4. Switch to hooks
+5. Add Redux

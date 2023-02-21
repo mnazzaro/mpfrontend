@@ -1,92 +1,104 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Player from '../Player/Player';
+import { useStore } from 'react-redux';
+import { SocketContext } from '../../SocketContext';
 
-class Table extends React.Component {
+// class Table extends React.Component {
     
-    constructor(props) {
-        super (props);
-        this.state = {
-            bettingOrder: props.bettingOrder,
-            connectedPlayerData: {}, // json object structured like: { 1: {...cosmetic}} where 1 is the id
-            heroData: props.heroData, // json object structured like: { id: 1, cosmetic: {...}}
-        }
-    }
+//     constructor(props) {
+//         super (props);
+//         // this.state = {
+//         //     bettingOrder: props.bettingOrder,
+//         //     connectedPlayerData: {}, // json object structured like: { 1: {...cosmetic}} where 1 is the id
+//         //     heroData: props.heroData, // json object structured like: { id: 1, cosmetic: {...}}
+//         // }
+//     }
 
-    componentDidMount () {
-        this.props.socket.on('load_player', this.onLoadPlayer);
-    }
+//     componentDidMount () {
+//         props.socket.on('load_player', this.onLoadPlayer);
+//     }
 
-    onLoadPlayer = (playerData) => {
-        const temp_pd = this.state.connectedPlayerData;
-        temp_pd[playerData['id']] = playerData['id'];
-        this.setState({ connectedPlayerData: temp_pd });
-    }
-    
-    render () {
-        const pi = 3.14159;
-        const n = this.state.bettingOrder.length;
-        const perimeter = 2 * (this.props.sLength + pi * this.props.radius);
-        const distBetween = perimeter / n;
-        let totalDist = 0;
-        let seatingLocations = {};
-        let x = 0;
-        let y  = 0;
-        for (let i = 0; i < n; i++) {
-            if (this.state.bettingOrder[i] == this.state.heroData.id) {
-                totalDist += distBetween;
-                seatingLocations[this.state.bettingOrder[i]] = this.props.anchor;
-                continue;
-            }
-            // Check to see if we are on the left semicircle
-            if (totalDist > (this.props.sLength / 2) && totalDist < ((this.props.sLength / 2) + (pi * this.props.radius)))  { 
-                const theta = ((totalDist - this.props.sLength) / 2 * pi * this.props.radius) / (2 * pi);
-                x = this.props.anchor.x - (this.props.sLength / 2) - (this.props.radius * Math.sin(theta));
-                y = this.props.anchor.y + (this.props.radius * Math.cos(theta));
-            // Check to see if we are on the right semicircle
-            } else if (totalDist > (this.props.sLength * 1.5 + (pi * this.props.radius)) && totalDist < (perimeter - (this.props.sLength / 2))) {
-                const theta = ((totalDist - (this.props.sLength * 1.5 +  (pi * this.props.radius))) / 2 * pi * this.props.radius) / (2 * pi);
-                x = this.props.anchor.x + (this.props.sLength / 2) + (this.props.radius * Math.sin(theta));
-                y = this.props.anchor.y + (2 * this.props.radius) - (this.props.radius * Math.cos(theta));
-            // Check to see if we are on flat bit left of the anchor
-            } else if (totalDist <= this.props.sLength / 2) {
-                x = this.props.anchor.x - totalDist;
-                y = this.props.anchor.y;
-            // Check to see if we are on the top flat bit
-            } else if (totalDist >= ((this.props.sLength / 2) + (pi * this.props.radius)) && totalDist <= ((this.props.sLength * 1.5) + (pi * this.props.radius))) {
-                x = this.props.anchor.x + totalDist - ((this.props.sLength / 2) + pi * this.props.radius);
-                y = this.props.anchor.y + 2 * this.props.radius;
-            // Check to see if we are on the flat bit right of the anchor
-            } else {
-                x = this.props.anchor.x + perimeter - totalDist;
-                y = this.props.anchor.y;
-            }
-            seatingLocations[this.state.bettingOrder[i]] = {x: x, y: y};
+//     onLoadPlayer = (playerData) => {
+//         const temp_pd = this.state.connectedPlayerData;
+//         temp_pd[playerData['id']] = playerData['id'];
+//         this.setState({ connectedPlayerData: temp_pd });
+//     }
+// }
+
+function Table (props) {
+    const store = useStore();
+    const pi = 3.14159;
+    const length = store.getState().connect.view.width;
+    const radius = store.getState().connect.view.height / 2;
+    const n = 3; // TODO
+    const perimeter = 2 * (length + pi * radius);
+    const distBetween = perimeter / n;
+    let totalDist = 0;
+    let seatingLocations = {};
+    let x = 0;
+    let y  = 0;
+    console.log("Length: " + length + ", Radius: " + radius);
+    const socket = useContext(SocketContext);
+    for (let i = 0; i < n; i++) {
+        // if (props.bettingOrder[i] === props.heroData.id) {
+        //     seatingLocations[props.bettingOrder[i]] = props.anchor;
+        //     continue;
+        // }
+        // Check to see if we are on the left semicircle
+        if (totalDist > (length / 2) && totalDist < ((length / 2) + (pi * radius)))  { 
+            const theta = (totalDist - (length / 2)) / (radius);
+            x = props.anchor.x - (length / 2) - (radius * Math.sin(theta));
+            y = props.anchor.y + (radius * Math.cos(theta));
+            console.log(i + " hit 1");
+        // Check to see if we are on the right semicircle
+        } else if (totalDist > (length * 1.5 + (pi * radius)) && totalDist < (perimeter - (length / 2))) {
+            const theta = ((totalDist - (length * 1.5 +  (pi * radius))) / 2 * pi * radius) / (2 * pi);
+            x = props.anchor.x + (length / 2) + (radius * Math.sin(theta));
+            y = props.anchor.y + (2 * radius) - (radius * Math.cos(theta));
+            console.log(i + " hit 2");
+        // Check to see if we are on flat bit left of the anchor
+        } else if (totalDist <= length / 2) {
+            x = props.anchor.x - totalDist;
+            y = props.anchor.y;
+            console.log(i + " hit 3");
+        // Check to see if we are on the top flat bit
+        } else if (totalDist >= ((length / 2) + (pi * radius)) && totalDist <= ((length * 1.5) + (pi * radius))) {
+            x = props.anchor.x + totalDist - ((length / 2) + pi * radius);
+            y = props.anchor.y + 2 * radius;
+            console.log(i + " hit 4");
+        // Check to see if we are on the flat bit right of the anchor
+        } else {
+            x = props.anchor.x + perimeter - totalDist;
+            y = props.anchor.y;
+            console.log(i + " hit 5");
         }
-        return (
-            <div className="table">
-                {
-                    this.state.bettingOrder.map((playerId) => {
-                        const isHero = playerId === this.state.heroData.id;
-                        return (
-                            <Player
-                                connected={ isHero ? 
-                                    this.props.socket.connected : 
-                                    playerId in this.state.connectedPlayerData
-                                }
-                                hero={isHero}
-                                data={ isHero ?
-                                    this.state.heroData :
-                                    this.state.connectedPlayerData[playerId]  // is this undefined? We're good as long as no crash
-                                }
-                                x={seatingLocations[playerId].x}
-                                y={seatingLocations[playerId].y}
-                            />
-                        );
-                    })
-                }
-            </div>
-        );
+        seatingLocations[props.bettingOrder[i]] = {x: x, y: radius * 2 - y};
+        totalDist += distBetween;
     }
+    console.log("Table: " + socket.connected);
+    return (
+        <div className="table">
+            {
+                props.bettingOrder.map((playerId) => {
+                    const isHero = playerId === props.heroData.id;
+                    return (
+                        <Player
+                            key={playerId}
+                            keyId={playerId}
+                            connected={ true
+                            }
+                            hero={isHero}
+                            data={  
+                                props.heroData
+                            }
+                            x={seatingLocations[playerId].x}
+                            y={seatingLocations[playerId].y}
+                        />
+                    );
+                })
+            }
+        </div>
+    );
 }
 
 export default Table;
