@@ -41,7 +41,15 @@ class Player extends Component {
         const style = {
             position: 'absolute',
             left: this.props.x,
-            top: this.props.y
+            top: this.props.y,
+            backgroundColor: 'gray',
+            height: '60px',
+            width: '200px',
+            borderRadius: '5px',
+
+            display: 'flex',
+            justifyContent: 'space-around',
+
         }
         console.log (this.props.keyId + ": " + this.props.x + ", " + this.props.y);
         return (

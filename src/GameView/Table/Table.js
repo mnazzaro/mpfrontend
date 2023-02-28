@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import Player from '../Player/Player';
 import { useStore } from 'react-redux';
 import { SocketContext } from '../../SocketContext';
+import './table.css';
 
 // class Table extends React.Component {
     
@@ -28,10 +29,10 @@ import { SocketContext } from '../../SocketContext';
 function Table (props) {
     const store = useStore();
     const pi = 3.14159;
-    const length = store.getState().connect.view.width;
-    const radius = store.getState().connect.view.height / 2;
-    const n = 3; // TODO
-    const perimeter = 2 * (length + pi * radius);
+    const length = 400; //store.getState().connect.view.width - 1000;
+    const radius = 300; //store.getState().connect.view.height / 2;
+    const n = props.bettingOrder.length; // TODO
+    const perimeter = (2 * length) + (2 * pi * radius);
     const distBetween = perimeter / n;
     let totalDist = 0;
     let seatingLocations = {};
@@ -39,45 +40,47 @@ function Table (props) {
     let y  = 0;
     console.log("Length: " + length + ", Radius: " + radius);
     const socket = useContext(SocketContext);
+
+    const style = {
+        position: 'absolute',
+        width: 'fit-content',
+        height: 'auto',
+        margin: '0 auto',
+    };
+
     for (let i = 0; i < n; i++) {
-        // if (props.bettingOrder[i] === props.heroData.id) {
-        //     seatingLocations[props.bettingOrder[i]] = props.anchor;
-        //     continue;
-        // }
-        // Check to see if we are on the left semicircle
-        if (totalDist > (length / 2) && totalDist < ((length / 2) + (pi * radius)))  { 
-            const theta = (totalDist - (length / 2)) / (radius);
-            x = props.anchor.x - (length / 2) - (radius * Math.sin(theta));
-            y = props.anchor.y + (radius * Math.cos(theta));
+        
+        // Check to see if we are on the bottom left flat bit
+        if (totalDist <= (length / 2)) {
             console.log(i + " hit 1");
-        // Check to see if we are on the right semicircle
-        } else if (totalDist > (length * 1.5 + (pi * radius)) && totalDist < (perimeter - (length / 2))) {
-            const theta = ((totalDist - (length * 1.5 +  (pi * radius))) / 2 * pi * radius) / (2 * pi);
-            x = props.anchor.x + (length / 2) + (radius * Math.sin(theta));
-            y = props.anchor.y + (2 * radius) - (radius * Math.cos(theta));
-            console.log(i + " hit 2");
-        // Check to see if we are on flat bit left of the anchor
-        } else if (totalDist <= length / 2) {
             x = props.anchor.x - totalDist;
-            y = props.anchor.y;
+            y = props.anchor.y + radius;
+        } else if (totalDist <= ((length / 2) + (pi * radius))) {
+            console.log(i + " hit 2");
+            const theta = (totalDist - (length / 2)) / radius;
+            x = props.anchor.x - (length / 2)  - (radius * Math.sin(theta));
+            y = props.anchor.y + (radius * Math.cos(theta));
+        } else if (totalDist <= ((3 * length / 2) + (pi * radius))) {
             console.log(i + " hit 3");
-        // Check to see if we are on the top flat bit
-        } else if (totalDist >= ((length / 2) + (pi * radius)) && totalDist <= ((length * 1.5) + (pi * radius))) {
-            x = props.anchor.x + totalDist - ((length / 2) + pi * radius);
-            y = props.anchor.y + 2 * radius;
+            x = props.anchor.x - length + totalDist - (pi * radius);
+            y = props.anchor.y - radius;
+        } else if (totalDist <= ((3 * length / 2) + (2 * pi * radius))) {
             console.log(i + " hit 4");
-        // Check to see if we are on the flat bit right of the anchor
+            const theta = (totalDist - (3 * length / 2) - (pi * radius)) / radius;
+            x = props.anchor.x + (length / 2)  + (radius * Math.sin(theta));
+            y = props.anchor.y - (radius * Math.cos(theta));
         } else {
-            x = props.anchor.x + perimeter - totalDist;
-            y = props.anchor.y;
             console.log(i + " hit 5");
+            console.log( (totalDist - ((3 * length / 2) + (2 * pi * radius))));
+            x = props.anchor.x + distBetween;
+            y = props.anchor.y + radius;
         }
-        seatingLocations[props.bettingOrder[i]] = {x: x, y: radius * 2 - y};
+        seatingLocations[props.bettingOrder[i]] = {x: x, y: y};
         totalDist += distBetween;
     }
     console.log("Table: " + socket.connected);
     return (
-        <div className="table">
+        <div className="table" style={style}>
             {
                 props.bettingOrder.map((playerId) => {
                     const isHero = playerId === props.heroData.id;
