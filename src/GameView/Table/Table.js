@@ -29,8 +29,8 @@ import './table.css';
 function Table (props) {
     const store = useStore();
     const pi = 3.14159;
-    const length = 400; //store.getState().connect.view.width - 1000;
-    const radius = 300; //store.getState().connect.view.height / 2;
+    const length = store.getState().connect.view.width / 4;
+    const radius = store.getState().connect.view.height / 3.2;
     const n = props.bettingOrder.length; // TODO
     const perimeter = (2 * length) + (2 * pi * radius);
     const distBetween = perimeter / n;
@@ -43,9 +43,9 @@ function Table (props) {
 
     const style = {
         position: 'absolute',
-        width: 'fit-content',
-        height: 'auto',
-        margin: '0 auto',
+        // width: 'fit-content',
+        // height: 'auto',
+        // margin: '0 auto',
     };
 
     for (let i = 0; i < n; i++) {

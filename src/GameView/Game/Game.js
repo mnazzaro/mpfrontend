@@ -84,7 +84,7 @@ function Game (props) {
             <SocketContextProvider>
                 <Table 
                     heroData={props.heroData}
-                    bettingOrder={[0, 1, 2, 3, 4, 5, 6, 7, 8]}
+                    bettingOrder={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
                     anchor={{x: props.view.width / 2, y: props.view.height / 2}}
                 />
             </SocketContextProvider>

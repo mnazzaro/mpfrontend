@@ -5,7 +5,6 @@ import HeroPfp from "../assets/hero.png";
 function Common (props) {
     return (
         <div className='common'>
-            <Banner/>
             <Game
                 connectionString="http://localhost:8002"
                 gameOver={() => console.log("Game Over")}

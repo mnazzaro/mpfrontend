@@ -40,13 +40,14 @@ class Player extends Component {
         // }
         const style = {
             position: 'absolute',
-            left: this.props.x,
-            top: this.props.y,
-            backgroundColor: 'gray',
-            height: '60px',
-            width: '200px',
+            left: this.props.x - 25, // This is to deal with the border size, should prob be put in redux
+            top: this.props.y - 25,
+            transform: 'translateX(-50%) translateY(-50%)',
+            backgroundColor: 'lightgray',
+            height: '2.5vw',
+            width: '9vw',
             borderRadius: '5px',
-
+            borderColor: 'black',
             display: 'flex',
             justifyContent: 'space-around',
 
