@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { PlayerContext } from '../Player/Player';
 import Card from "../Card/Card";
+import './hand.css';
 
 
 function Hand (props) {

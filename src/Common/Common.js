@@ -1,6 +1,6 @@
 import Banner from "../Banner/Banner";
 import Game from "../GameView/Game/Game";
-import HeroPfp from "../assets/hero.png";
+import HeroPfp from "../GameView/assets/blank_avatar.png";
 
 function Common (props) {
     return (

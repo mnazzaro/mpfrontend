@@ -38,14 +38,18 @@ class Player extends Component {
         //         <Avatar src={blankAvatar} alt="Awaiting Player"/>
         //     </div>
         // }
-        const style = {
+        const cardContainerStyle = {
             position: 'absolute',
             left: this.props.x - 25, // This is to deal with the border size, should prob be put in redux
             top: this.props.y - 25,
             transform: 'translateX(-50%) translateY(-50%)',
-            backgroundColor: 'lightgray',
-            height: '2.5vw',
+        }
+        const style = {
+            position: 'relative',
+            height: '3vw',
             width: '9vw',
+            backgroundColor: 'lightgray',
+
             borderRadius: '5px',
             borderColor: 'black',
             display: 'flex',
@@ -57,11 +61,13 @@ class Player extends Component {
             <PlayerContext.Provider value={this.state}>
                 {
                     this.state.connected ?
-                        <div className="player-container connected" style={style}>
-                            <Avatar/>
-                            <PublicName/>
+                        <div className="card-container" style={cardContainerStyle}>
                             <Hand/>
-                            <Stack/>
+                            <div className="player-container connected" style={style}>
+                                <Avatar/>
+                                <PublicName/>
+                                <Stack/>
+                            </div>
                         </div>
                     :
                         <div className="player-container disconnected" style={style}>

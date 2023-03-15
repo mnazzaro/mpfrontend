@@ -56,5 +56,6 @@ html {
     box-sizing: border-box;
     border-style: inset;
     border-width: 25px;
-    border-image: url('./assets/metal_texture.jpg') 20 round;
+    /*border-image: url('./assets/metal_texture.jpg') 20 round;*/
+    border-color: darkgray;
 }

@@ -1,0 +1,8 @@
+.card {
+    z-index: -1;
+    width: 3.5vw;
+    height: 5vw;
+    font-weight: bolder;
+    font-size: large;
+    background-color: darkred;
+}
