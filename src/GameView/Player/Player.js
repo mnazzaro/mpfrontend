@@ -1,113 +1,56 @@
-import { Component, createContext, useState } from 'react';
+import { createContext, useState } from 'react';
+import { useStore } from 'react-redux';
 import Avatar from '../Avatar/Avatar';
 import PublicName from '../PublicName/PublicName';
 import Hand from '../Hand/Hand';
 import Stack from '../Stack/Stack';
 
-class Player extends Component {
+function Player (props) {
 
-    constructor (props) {
-        super(props);
-        this.state = {
-            cosmetic: props.connected ? props.data.cosmetic : null,
-            connected: props.connected,
-            hero: props.hero,
-            gameData: props.connected ? props.data.gameData : null
-        }
+    const store = useStore();
+
+    const cardContainerStyle = {
+        position: 'absolute',
+        left: props.x - 25, // This is to deal with the border size, should prob be put in redux
+        top: props.y - 25,
+        transform: 'translateX(-50%) translateY(-50%)',
     }
+    const style = {
+        position: 'relative',
+        height: '3vw',
+        width: '9vw',
+        backgroundColor: 'lightgray',
 
-    render () {
-        // if (this.state.connected) {
-        //     return (
-                
-        //         <div className="player-container connected">
-        //             <Avatar 
-        //                 src={this.state.cosmetic.avatar}
-        //                 alt={this.state.cosmetic.name + "'s Avatar"}
-        //             />
-        //             <PublicName name={this.state.cosmetic.name}/>
-        //             <Hand cards={this.state.gameData.hand}/>
-        //             <Stack 
-        //                 committed={this.state.gameData.stack.committed}
-        //                 uncommitted={this.state.gameData.stack.uncommitted}
-        //             />
-        //         </div>
-        //     );
-        // } else {
-        //     <div className="player-container disconnected">
-        //         <Avatar src={blankAvatar} alt="Awaiting Player"/>
-        //     </div>
-        // }
-        const cardContainerStyle = {
-            position: 'absolute',
-            left: this.props.x - 25, // This is to deal with the border size, should prob be put in redux
-            top: this.props.y - 25,
-            transform: 'translateX(-50%) translateY(-50%)',
-        }
-        const style = {
-            position: 'relative',
-            height: '3vw',
-            width: '9vw',
-            backgroundColor: 'lightgray',
+        borderRadius: '5px',
+        borderColor: 'black',
+        display: 'flex',
+        justifyContent: 'space-around',
 
-            borderRadius: '5px',
-            borderColor: 'black',
-            display: 'flex',
-            justifyContent: 'space-around',
-
-        }
-        console.log (this.props.keyId + ": " + this.props.x + ", " + this.props.y);
-        return (
-            <PlayerContext.Provider value={this.state}>
-                {
-                    this.state.connected ?
-                        <div className="card-container" style={cardContainerStyle}>
-                            <Hand/>
-                            <div className="player-container connected" style={style}>
-                                <Avatar/>
-                                <PublicName/>
-                                <Stack/>
-                            </div>
-                        </div>
-                    :
-                        <div className="player-container disconnected" style={style}>
-                            <Avatar/>
-                        </div>
-                }
-            </PlayerContext.Provider>
-        );
     }
+    const [context, setContext] = useState(
+        props.hero ?
+        {
+            ...(store.getState().game.hero),
+            ...(store.getState().connection)
+        } : store.getState().players.filter((p) => p.seat === props.keyId)
+    );
+
+    return (
+        <PlayerContext.Provider value={context}>
+            <div className="card-container" style={cardContainerStyle}>
+                <Hand/>
+                <div className="player-container connected" style={style}>
+                    <Avatar/>
+                    <PublicName/>
+                    <Stack/>
+                </div>
+            </div>
+        </PlayerContext.Provider>
+    );
+    
 }
 
 const PlayerContext = createContext();
-
-// function Player (props) {
-//     const [playerState, setPlayerState] = useState(
-//         {
-//             cosmetic: props.connected ? props.data.cosmetic : null,
-//             connected: props.connected,
-//             hero: props.hero,
-//             gameData: props.connected ? props.data.gameData : null
-//         }
-//     );
-//     console.log(props.connected);
-//     return (
-//         <PlayerContext.Provider value={playerState}>
-//             if (playerState.connected) {
-//                 <div className="player-container connected">
-//                     <Avatar/>
-//                     <PublicName/>
-//                     <Hand/>
-//                     <Stack/>
-//                 </div>
-//             } else {
-//                 <div className="player-container disconnected">
-//                     <Avatar/>
-//                 </div>
-//             }
-//         </PlayerContext.Provider>
-//     );
-// }
 
 export { PlayerContext };
 export default Player;

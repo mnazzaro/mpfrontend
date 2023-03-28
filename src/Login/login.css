@@ -1,0 +1,20 @@
+#login-form {
+    position: relative;
+
+    width: 20vw;
+    height: 30vh;
+
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    margin: 0 auto;
+
+    text-align: center;
+
+    background-color: gray;
+}
+
+.inner-container {
+    position: relative;
+    margin-top: 50px;
+}

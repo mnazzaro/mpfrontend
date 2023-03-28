@@ -1,35 +1,39 @@
 import Banner from "../Banner/Banner";
 import Game from "../GameView/Game/Game";
-import HeroPfp from "../GameView/assets/blank_avatar.png";
+import Login from "../Login/Login";
+import JoinGame from "../HomeView/JoinGame/JoinGame";
+
+import { useSelector } from "react-redux";
+
+import './common.css';
 
 function Common (props) {
+    const common = <Banner/>;
+    let uncommon;
+
+    const currentView = useSelector ((state) => state.app.currentView);
+
+    switch (currentView) {
+        case 'login':
+            uncommon = <Login action='/login'/>;
+            break;
+        case 'game':
+            uncommon = <Game connectionString="http://localhost:8002"/>;
+            break;
+        case 'home':
+            uncommon = <JoinGame/>;
+            break;
+        default:
+            uncommon = <span>Unknown application view. Please reload the page.</span>
+            break;
+    }
+
     return (
-        <div className='common'>
-            <Game
-                connectionString="http://localhost:8002"
-                gameOver={() => console.log("Game Over")}
-                heroData={{
-                    id: 1,
-                    cosmetic: {
-                        name: "Hero",
-                        avatar: HeroPfp // Get hero data - TODO: implement data stores for recovery/reconnection
-                    },
-                    gameData: {
-                        hand: [
-                            {rank: 'A', suit: 'h'},
-                            {rank: 'A', suit: 'c'}
-                        ],
-                        stack: {
-                            committed: 0,
-                            uncommitted: 2000
-                        }
-                    }
-                }}
-                view={{
-                    width: window.innerWidth,
-                    height: window.innerHeight
-                }}
-            />
+        <div className="content-inside-border">
+            <div className='common'>
+                {common}
+            </div>
+            {uncommon}
         </div>
     );
 }

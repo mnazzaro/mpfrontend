@@ -6,15 +6,19 @@ import './hand.css';
 
 function Hand (props) {
     const playerCtxt = useContext(PlayerContext);
-    return (
-        <div className="hand">
-            {
-                playerCtxt.gameData.hand.map((card, i) => {
-                    return (<Card key={i} rank={card.rank} suit={card.suit}/>);
-                })
-            }
-        </div>
-    );
+
+    if (playerCtxt.connectionData.connected && playerCtxt.hand.inHand) {
+        return (
+            <div className="hand">
+                {
+                    playerCtxt.hand.map((card, i) => {
+                        return (<Card key={i} rank={card.rank} suit={card.suit}/>);
+                    })
+                }
+            </div>
+        );
+    }
+    return (<div className="hand"></div>);
 }
 
 export default Hand;

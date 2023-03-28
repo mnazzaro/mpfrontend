@@ -40,6 +40,8 @@
 html {
     height: 100%; /* Fallback CSS for IE 4-6 and older browsers. Note: Without this setting, body below cannot achieve 100% height. */
     height: 100vh;/* Overrides 100% height in modern HTML5 browsers and uses the viewport's height. Only works in modern HTML5 browsers */
+
+    --border-width-px: 25px;
 }
 
 
@@ -55,7 +57,7 @@ html {
     -moz-box-sizing: border-box;    /* Firefox, other Gecko */
     box-sizing: border-box;
     border-style: inset;
-    border-width: 25px;
+    border-width: var(--border-width-px);
     /*border-image: url('./assets/metal_texture.jpg') 20 round;*/
     border-color: darkgray;
 }

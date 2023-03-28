@@ -1,0 +1,5 @@
+.content-inside-border {
+    position: absolute;
+    width: calc(100% - (2 * var(--border-width-px)));
+    height: calc(100% - (2 * var(--border-width-px)));
+}

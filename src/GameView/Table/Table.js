@@ -1,44 +1,34 @@
 import React, { useContext } from 'react';
 import Player from '../Player/Player';
-import { useStore } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { SocketContext } from '../../SocketContext';
 import './table.css';
 
-// class Table extends React.Component {
-    
-//     constructor(props) {
-//         super (props);
-//         // this.state = {
-//         //     bettingOrder: props.bettingOrder,
-//         //     connectedPlayerData: {}, // json object structured like: { 1: {...cosmetic}} where 1 is the id
-//         //     heroData: props.heroData, // json object structured like: { id: 1, cosmetic: {...}}
-//         // }
-//     }
-
-//     componentDidMount () {
-//         props.socket.on('load_player', this.onLoadPlayer);
-//     }
-
-//     onLoadPlayer = (playerData) => {
-//         const temp_pd = this.state.connectedPlayerData;
-//         temp_pd[playerData['id']] = playerData['id'];
-//         this.setState({ connectedPlayerData: temp_pd });
-//     }
-// }
-
 function Table (props) {
-    const store = useStore();
+
+    const window = useSelector((state) => state.view.window);
+    const hero = useSelector((state) => state.game.hero);
+    const players = useSelector((state) => state.game.players)
+
     const pi = 3.14159;
-    const length = store.getState().connect.view.width / 4;
-    const radius = store.getState().connect.view.height / 3.2;
-    const n = props.bettingOrder.length; // TODO
+
+    const anchor = {x: window.width / 2, y: window.height / 2}
+    const length = window.width / 4;
+    const radius = window.height / 3.2;
     const perimeter = (2 * length) + (2 * pi * radius);
+    const bettingOrder = players.length > 0 ? 
+                            players
+                                .map((p) => p.seat)
+                                .push(hero.seat)
+                                .sort()
+                            : [hero.seat];
+    const n = bettingOrder.length;
     const distBetween = perimeter / n;
     let totalDist = 0;
     let seatingLocations = {};
     let x = 0;
     let y  = 0;
-    console.log("Length: " + length + ", Radius: " + radius);
+
     const socket = useContext(SocketContext);
 
     const style = {
@@ -48,52 +38,41 @@ function Table (props) {
         // margin: '0 auto',
     };
 
+    // This just uses a bunch of trig to arrange the players in a poker table shape
+    // The shape is two semi circles facing each other connected by straight lines
     for (let i = 0; i < n; i++) {
-        
-        // Check to see if we are on the bottom left flat bit
         if (totalDist <= (length / 2)) {
-            console.log(i + " hit 1");
-            x = props.anchor.x - totalDist;
-            y = props.anchor.y + radius;
+            x = anchor.x - totalDist;
+            y = anchor.y + radius;
         } else if (totalDist <= ((length / 2) + (pi * radius))) {
-            console.log(i + " hit 2");
             const theta = (totalDist - (length / 2)) / radius;
-            x = props.anchor.x - (length / 2)  - (radius * Math.sin(theta));
-            y = props.anchor.y + (radius * Math.cos(theta));
+            x = anchor.x - (length / 2)  - (radius * Math.sin(theta));
+            y = anchor.y + (radius * Math.cos(theta));
         } else if (totalDist <= ((3 * length / 2) + (pi * radius))) {
-            console.log(i + " hit 3");
-            x = props.anchor.x - length + totalDist - (pi * radius);
-            y = props.anchor.y - radius;
+            x = anchor.x - length + totalDist - (pi * radius);
+            y = anchor.y - radius;
         } else if (totalDist <= ((3 * length / 2) + (2 * pi * radius))) {
-            console.log(i + " hit 4");
             const theta = (totalDist - (3 * length / 2) - (pi * radius)) / radius;
-            x = props.anchor.x + (length / 2)  + (radius * Math.sin(theta));
-            y = props.anchor.y - (radius * Math.cos(theta));
+            x = anchor.x + (length / 2)  + (radius * Math.sin(theta));
+            y = anchor.y - (radius * Math.cos(theta));
         } else {
-            console.log(i + " hit 5");
-            console.log( (totalDist - ((3 * length / 2) + (2 * pi * radius))));
-            x = props.anchor.x + distBetween;
-            y = props.anchor.y + radius;
+            x = anchor.x + distBetween;
+            y = anchor.y + radius;
         }
-        seatingLocations[props.bettingOrder[i]] = {x: x, y: y};
+        seatingLocations[bettingOrder[i]] = {x: x, y: y};
         totalDist += distBetween;
     }
-    console.log("Table: " + socket.connected);
     return (
         <div className="table" style={style}>
             {
-                props.bettingOrder.map((playerId) => {
-                    const isHero = playerId === props.heroData.id;
+                bettingOrder.map((playerId) => {
+                    const isHero = playerId === hero.seat;
+                    console.log(seatingLocations[playerId]);
                     return (
                         <Player
                             key={playerId}
                             keyId={playerId}
-                            connected={ true
-                            }
                             hero={isHero}
-                            data={  
-                                props.heroData
-                            }
                             x={seatingLocations[playerId].x}
                             y={seatingLocations[playerId].y}
                         />

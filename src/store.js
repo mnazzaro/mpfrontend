@@ -1,9 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit';
-import connectReducer from './reducer';
+
+// TODO: Figure out a way to clean this up
+import connectionReducer from './slices/connectionSlice';
+import gameReducer from './slices/gameSlice';
+import viewReducer from './slices/viewSlice';
+import appReducer from './slices/appSlice';
 
 const store = configureStore({
     reducer: {
-        connect: connectReducer
+        connection: connectionReducer,
+        game: gameReducer,
+        view: viewReducer,
+        app: appReducer
     }
 });
 

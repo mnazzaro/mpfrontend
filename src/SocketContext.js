@@ -1,6 +1,6 @@
 import React, { createContext } from 'react'
 import io from 'socket.io-client';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
     connect, 
     disconnect,
@@ -12,11 +12,11 @@ const SocketContext = createContext();
 
 const SocketContextProvider = ({ children }) => {
     let socket;
-
+    const socketAddress = useSelector((state) => state.app.socketAddress);
     const dispatch = useDispatch();
 
     if (!socket) {
-        socket = io.connect("http://localhost:8002"); // TODO: What is this supposed to be?
+        socket = io.connect(socketAddress); 
 
         socket.on("connect", () => {
             dispatch(connect());
@@ -26,9 +26,13 @@ const SocketContextProvider = ({ children }) => {
             dispatch(connectError());
         });
 
-        socket.on("disconnect", (reason) => {
-            const payload = JSON.parse(reason);
-            dispatch(disconnect(payload));
+        // socket.on("disconnect", (reason) => {
+        //     const payload = JSON.parse(reason);
+        //     dispatch(disconnect(payload));
+        // }); TODO: Maybe later lol, no reason for now
+
+        socket.on("disconnect", () => {
+            dispatch(disconnect());
         });
     }
 

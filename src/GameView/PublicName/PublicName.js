@@ -3,7 +3,7 @@ import { PlayerContext } from '../Player/Player';
 
 function PublicName (props) {
     const playerCtxt = useContext(PlayerContext);
-    return (<span>{playerCtxt.cosmetic.name}</span>);
+    return (<span>{playerCtxt.cosmetic.username}</span>);
 }
 
 export default PublicName;

@@ -5,10 +5,10 @@ import './avatar.css';
 
 function Avatar (props) {
     const playerCtxt = useContext(PlayerContext);
-    if (playerCtxt.connected) {
-        return (<img id="avatar" src={playerCtxt.cosmetic.avatar} alt={playerCtxt.cosmetic.name + "'s Avatar"} height="45px;"/>);
+    if (playerCtxt.connectionData.connected) {
+        return (<img className="avatar" src={playerCtxt.cosmetic.avatar} alt={playerCtxt.cosmetic.name + "'s Avatar"} height="45px;"/>);
     } else {
-        return (<img src={blankAvatar} alt="Awaiting Player"/>)
+        return (<img className="avatar" src={blankAvatar} alt="Awaiting Player"/>)
     }
 }
 

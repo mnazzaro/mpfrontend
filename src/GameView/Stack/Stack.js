@@ -5,8 +5,8 @@ function Stack (props) {
     const playerCtxt = useContext(PlayerContext);
     return (
         <div className="stack-container">
-            <div className="stack">{playerCtxt.gameData.stack.uncommitted}</div>
-            <div className="committed">{playerCtxt.gameData.stack.committed}</div>
+            <div className="stack">{playerCtxt.hand.stack.uncommitted}</div>
+            <div className="committed">{playerCtxt.hand.stack.committed}</div>
         </div>
     );
 }
