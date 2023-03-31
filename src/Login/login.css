@@ -12,6 +12,8 @@
     text-align: center;
 
     background-color: gray;
+
+    border-radius: 3%;
 }
 
 .inner-container {

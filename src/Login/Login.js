@@ -45,7 +45,7 @@ function Login (props) {
 
     return (
         <form id="login-form" onSubmit={handleSubmit}>
-            <h1 style={{paddingTop: '10px'}}>Login</h1>
+            <h1 style={{paddingTop: '35px'}}>Login</h1>
             <div className="inner-container">
                 <label>Email:</label><br/>
                 <input type="text" id="email" value={email} onChange={handleUpdateEmail}/><br/>
