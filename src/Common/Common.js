@@ -18,7 +18,7 @@ function Common (props) {
             uncommon = <Login action='/login'/>;
             break;
         case 'game':
-            uncommon = <Game connectionString="http://localhost:8002"/>;
+            uncommon = <Game connectionString="http://127.0.0.1:5000"/>;
             break;
         case 'home':
             uncommon = <JoinGame/>;

@@ -7,7 +7,12 @@ import HeroPfp from '../GameView/assets/blank_avatar.png'
 ***************************
 
 {
-    currentView: string
+    currentView: string,
+    auth: {
+        bearerToken: jwt,
+        refreshToken: jwt
+    },
+    socketAddress: string
 }
 
 ***************************
@@ -17,7 +22,11 @@ import HeroPfp from '../GameView/assets/blank_avatar.png'
 
 const initialState = {
     currentView: 'login',
-    socketAddress: null
+    auth: {
+        bearerToken: null,
+        refreshToken: null,
+    },
+    socketAddress: 'http://127.0.0.1:5000' // TODO: This will be set somewhere else, probably on login
 }
 
 const appSlice = createSlice ({
@@ -27,8 +36,9 @@ const appSlice = createSlice ({
         updateView (state, action) {
             state.currentView = action.payload;
         },
-        login (state) {
+        login (state, action) {
             state.currentView = 'home';
+            state.auth.bearerToken = action.payload;
         },
         joinGame (state, action) {
             state.currentView = 'game';

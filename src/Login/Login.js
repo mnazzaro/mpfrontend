@@ -33,10 +33,10 @@ function Login (props) {
                 password: password
             })
         });
-
+        const bearerToken = response.headers.get('access_token');
         response.json().then((data) => {
-            if (data.result) {
-                dispatch({ type: 'app/login' });
+            if (data.result && bearerToken != null) {
+                dispatch({ type: 'app/login', payload: bearerToken });
             } else {
                 alert ("Login Attempt Failed");
             }

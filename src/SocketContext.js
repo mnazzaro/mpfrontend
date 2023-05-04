@@ -1,6 +1,6 @@
 import React, { createContext } from 'react'
 import io from 'socket.io-client';
-import { useDispatch, useSelector } from 'react-redux';
+import store from './store';
 import {
     connect, 
     disconnect,
@@ -8,23 +8,38 @@ import {
     } 
     from './actions';
 
+// TODO: With redux, we no longer need contexts. This should basically just be a slice
+
 const SocketContext = createContext();
 
 const SocketContextProvider = ({ children }) => {
     let socket;
-    const socketAddress = useSelector((state) => state.app.socketAddress);
-    const dispatch = useDispatch();
+    const socketAddress = store.getState().app.socketAddress;
+    const bearerToken = store.getState().app.auth.bearerToken;
 
     if (!socket) {
-        socket = io.connect(socketAddress); 
+        console.log("Connecting to socket at " + socketAddress);
+        console.log("With bearer token: " + bearerToken);
+        socket = io.connect(socketAddress, {
+            auth: bearerToken,
+            data: {
+                stack: 200,
+            }
+        }); 
 
         socket.on("connect", () => {
-            dispatch(connect());
+            console.log("Connected")
+            store.dispatch(connect());
         });
 
-        socket.on("connect_error", () => {
-            dispatch(connectError());
+        socket.on("connect_error", (err) => {
+            console.log(`connect_error due to ${err.message}`);
+            store.dispatch(connectError());
         });
+
+        socket.on("load_initial_data", (payload) => {
+            console.log(payload);
+        })
 
         // socket.on("disconnect", (reason) => {
         //     const payload = JSON.parse(reason);
@@ -32,7 +47,7 @@ const SocketContextProvider = ({ children }) => {
         // }); TODO: Maybe later lol, no reason for now
 
         socket.on("disconnect", () => {
-            dispatch(disconnect());
+            store.dispatch(disconnect());
         });
     }
 
